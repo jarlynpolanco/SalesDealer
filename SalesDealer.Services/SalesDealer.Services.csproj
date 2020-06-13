@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FileHelpers" Version="3.4.1" />
+    <PackageReference Include="PgpCore" Version="2.4.0" />
+    <PackageReference Include="SSH.NET" Version="2016.1.0" />
   </ItemGroup>
 
   <ItemGroup>

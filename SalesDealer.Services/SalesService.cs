@@ -1,43 +1,69 @@
 ﻿using FileHelpers;
-using Microsoft.Extensions.Configuration;
 using SalesDealer.Data;
 using SalesDealer.Shared;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 
 namespace SalesDealer.Services
 {
     public class SalesService
     {
         private readonly AppDbContext _appDbContext;
-        private readonly string _destFile;
+        private readonly PgpEncryptionService _pgpEncryptionService;
+        private readonly SftpManagementService _sftpManagementService;
 
-        public SalesService(IConfiguration config, AppDbContext appDbContext) 
+        public SalesService(AppDbContext appDbContext, PgpEncryptionService pgpEncryptionService,
+            SftpManagementService sftpManagementService) 
         {
-            _destFile = config["AppSettings:DestFilePath"];
             _appDbContext = appDbContext;
+            _pgpEncryptionService = pgpEncryptionService;
+            _sftpManagementService = sftpManagementService;
         }
 
         public string GenerateSalesFile() 
         {
             var sales = GetAllSales();
-            var engine = new FileHelperEngine<SalesFH>();
-            string fileName = $"{Path.Combine(_destFile, Guid.NewGuid().ToString().Replace("-", string.Empty))}.txt";
-            engine.WriteFile(fileName, sales);
 
-            return Path.GetFileName(fileName);
+            if (sales == null || sales.Count() == 0)
+                throw new HttpStatusException($"No hay ventas disponibles. Favor revisar la fuente de datos.",
+                    HttpStatusCode.Forbidden);
+
+            var engine = new FileHelperEngine<SalesFH>();
+            string fileName = $"{Guid.NewGuid().ToString().Replace("-", string.Empty)}.pgp";
+
+            using (var stream = new MemoryStream())
+            using (var streamWriter = new StreamWriter(stream))
+            {
+                engine.WriteStream(streamWriter, sales);
+                streamWriter.AutoFlush = true;
+                stream.Position = 0;
+
+                using var streamReader = new StreamReader(stream);
+                var encryptedFile = _pgpEncryptionService.EncryptStreamFile(streamReader);
+                _sftpManagementService.SftpUploadFile(encryptedFile, fileName);
+            }
+
+            return fileName;
         }
 
         public IList<SalesFH> GetSalesFromFile(string fileName) 
         {
-            string path = Path.Combine(_destFile, fileName);
+            var fullFileName = _sftpManagementService.SftpDownloadFile(fileName);
 
-            return new FileHelperEngine<SalesFH>().ReadFileAsList(path);
+            if (!File.Exists(fullFileName))
+                throw new HttpStatusException($"El archivo con el nombre indicado: {fileName} no existe en el SFTP.",
+                    HttpStatusCode.Forbidden);
+
+            var streamFile = _pgpEncryptionService.DescryptFileAsStream(fullFileName);
+            using TextReader textReader = new StreamReader(streamFile);
+
+            return new FileHelperEngine<SalesFH>().ReadStream(textReader);
         }
 
-        public IList<SalesFH> GetAllSales() 
+        private IList<SalesFH> GetAllSales() 
         {
             return (from sale in _appDbContext.Sales
                     join client in _appDbContext.Clients on sale.DocumentNumber equals client.DocumentNumber

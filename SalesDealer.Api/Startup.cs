@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using SalesDealer.Data;
 using SalesDealer.Services;
+using SalesDealer.Shared;
 
 namespace SalesDealer.Api
 {
@@ -23,10 +24,13 @@ namespace SalesDealer.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AppSettings>(Configuration.GetSection(nameof(AppSettings)));
             services.AddDbContext<AppDbContext>(x => x.UseSqlServer(Configuration.GetConnectionString("SalesDb")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddTransient<SalesService>();
-           
+            services.AddTransient<SftpManagementService>();
+            services.AddTransient<PgpEncryptionService>();
+
             services.AddSwaggerGen(s => {
                 s.SwaggerDoc("v1", new OpenApiInfo
                 {
@@ -59,6 +63,7 @@ namespace SalesDealer.Api
                 s.SwaggerEndpoint("/swagger/v1/swagger.json", "SalesDealer UNAPEC");
             });
 
+            app.UseMiddleware<HttpStatusCodeException>();
 
             app.UseHttpsRedirection();
 
