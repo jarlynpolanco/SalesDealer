@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesDealer.Api", "SalesDealer.Api\SalesDealer.Api.csproj", "{F008951A-4C27-46D0-A879-702B2B9C8807}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesDealer.Api", "SalesDealer.Api\SalesDealer.Api.csproj", "{F008951A-4C27-46D0-A879-702B2B9C8807}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesDealer.Data", "SalesDealer.Data\SalesDealer.Data.csproj", "{BD88C786-B563-4584-9614-21247BC73320}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesDealer.Data", "SalesDealer.Data\SalesDealer.Data.csproj", "{BD88C786-B563-4584-9614-21247BC73320}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesDealer.Shared", "SalesDealer.Shared\SalesDealer.Shared.csproj", "{621FAA8B-26AF-44F3-BC76-52E4DE3097A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesDealer.Shared", "SalesDealer.Shared\SalesDealer.Shared.csproj", "{621FAA8B-26AF-44F3-BC76-52E4DE3097A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesDealer.Services", "SalesDealer.Services\SalesDealer.Services.csproj", "{C1928B8D-7C63-4CF3-B920-57BE18C748CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesDealer.Services", "SalesDealer.Services\SalesDealer.Services.csproj", "{C1928B8D-7C63-4CF3-B920-57BE18C748CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesDealer.Core", "SalesDealer.Core\SalesDealer.Core.csproj", "{1D6C00B5-BA1B-4629-A9F2-1B9FE1B4E37E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{C1928B8D-7C63-4CF3-B920-57BE18C748CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1928B8D-7C63-4CF3-B920-57BE18C748CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1928B8D-7C63-4CF3-B920-57BE18C748CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D6C00B5-BA1B-4629-A9F2-1B9FE1B4E37E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D6C00B5-BA1B-4629-A9F2-1B9FE1B4E37E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D6C00B5-BA1B-4629-A9F2-1B9FE1B4E37E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D6C00B5-BA1B-4629-A9F2-1B9FE1B4E37E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

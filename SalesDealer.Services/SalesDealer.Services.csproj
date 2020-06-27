@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SalesDealer.Core\SalesDealer.Core.csproj" />
     <ProjectReference Include="..\SalesDealer.Data\SalesDealer.Data.csproj" />
   </ItemGroup>
 

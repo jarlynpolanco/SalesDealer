@@ -1,4 +1,6 @@
 ﻿using FileHelpers;
+using Microsoft.Extensions.Options;
+using SalesDealer.Core;
 using SalesDealer.Data;
 using SalesDealer.Shared;
 using System;
@@ -14,39 +16,62 @@ namespace SalesDealer.Services
         private readonly AppDbContext _appDbContext;
         private readonly PgpEncryptionService _pgpEncryptionService;
         private readonly SftpManagementService _sftpManagementService;
+        private readonly IOptions<AppSettings> _appSettings;
 
         public SalesService(AppDbContext appDbContext, PgpEncryptionService pgpEncryptionService,
-            SftpManagementService sftpManagementService) 
+            SftpManagementService sftpManagementService, IOptions<AppSettings> appSettings) 
         {
             _appDbContext = appDbContext;
             _pgpEncryptionService = pgpEncryptionService;
             _sftpManagementService = sftpManagementService;
+            _appSettings = appSettings;
         }
 
         public string GenerateSalesFile() 
         {
             var sales = GetAllSales();
 
-            if (sales == null || sales.Count() == 0)
+            if (sales == null || !sales.Any())
                 throw new HttpStatusException($"No hay ventas disponibles. Favor revisar la fuente de datos.",
                     HttpStatusCode.Forbidden);
 
             var engine = new FileHelperEngine<SalesFH>();
             string fileName = $"{Guid.NewGuid().ToString().Replace("-", string.Empty)}.pgp";
 
-            using (var stream = new MemoryStream())
-            using (var streamWriter = new StreamWriter(stream))
-            {
-                engine.WriteStream(streamWriter, sales);
-                streamWriter.AutoFlush = true;
-                stream.Position = 0;
-
-                using var streamReader = new StreamReader(stream);
-                var encryptedFile = _pgpEncryptionService.EncryptStreamFile(streamReader);
-                _sftpManagementService.SftpUploadFile(encryptedFile, fileName);
-            }
+            using var stream = new MemoryStream();
+            using var streamWriter = new StreamWriter(stream);
+            
+            engine.WriteStream(streamWriter, sales);
+            streamWriter.AutoFlush = true;
+            stream.Position = 0;
+            using var streamReader = new StreamReader(stream);
+            var encryptedFile = _pgpEncryptionService.EncryptStreamFile(streamReader);
+            _sftpManagementService.SftpUploadFile(encryptedFile, fileName);
+            
 
             return fileName;
+        }
+
+        public string GenerateSalesOnXML() 
+        {
+            var sales = GetAllSales();
+
+            if (sales == null || !sales.Any())
+                throw new HttpStatusException($"No hay ventas disponibles. Favor revisar la fuente de datos.",
+                    HttpStatusCode.Forbidden);
+
+            var salesRoot = new SalesRoot()
+            {
+                Sales = new Sales() { Sale = sales.ToList() }
+            };
+
+            var xml = SerializerHelper.ObjectToXml(salesRoot);
+
+            var file = Path.Combine(_appSettings.Value.XmlPath, $"{Guid.NewGuid().ToString().Replace("-", string.Empty)}.xml");
+
+            File.WriteAllText(file, xml);
+
+            return file;
         }
 
         public IList<SalesFH> GetSalesFromFile(string fileName) 

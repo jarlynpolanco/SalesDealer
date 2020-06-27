@@ -29,7 +29,6 @@ namespace SalesDealer.Shared
                 });
 
                 await context.Response.WriteAsync(result);
-                return;
             }
             catch (Exception ex)
             {
@@ -41,7 +40,6 @@ namespace SalesDealer.Shared
                 });
 
                 await context.Response.WriteAsync(result);
-                return;
             }
         }
     }
