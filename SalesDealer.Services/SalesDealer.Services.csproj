@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="FileHelpers" Version="3.4.1" />
     <PackageReference Include="PgpCore" Version="2.4.0" />
     <PackageReference Include="SSH.NET" Version="2016.1.0" />

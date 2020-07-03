@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using SalesDealer.Core;
+using SalesDealer.Data.Models;
 using SalesDealer.Services;
 using SalesDealer.Shared;
 
@@ -48,6 +49,14 @@ namespace SalesDealer.Api.Controllers
         {
             var xmlString = Encoding.UTF8.GetString(Convert.FromBase64String(base64Xml));
             return SerializerHelper.StringToObject<SalesRoot>(xmlString);
+        }
+
+        [HttpGet("{base64Xml}")]
+        public IActionResult PersistSalesFromXML(string base64Xml)
+        {
+            var xmlString = Encoding.UTF8.GetString(Convert.FromBase64String(base64Xml));
+            _salesService.PersistSalesFromXML(SerializerHelper.StringToObject<SalesRoot>(xmlString));
+            return Ok();
         }
     }
 }

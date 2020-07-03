@@ -9,6 +9,8 @@ using Microsoft.OpenApi.Models;
 using SalesDealer.Data;
 using SalesDealer.Services;
 using SalesDealer.Shared;
+using AutoMapper;
+using SalesDealer.Services.Mappings;
 
 namespace SalesDealer.Api
 {
@@ -47,6 +49,8 @@ namespace SalesDealer.Api
                     .AllowAnyMethod()
                     .AllowAnyHeader());
             });
+
+            services.AddAutoMapper(typeof(Maps));
             services.AddControllers();
         }
 

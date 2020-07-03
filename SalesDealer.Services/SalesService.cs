@@ -1,7 +1,9 @@
-﻿using FileHelpers;
+﻿using AutoMapper;
+using FileHelpers;
 using Microsoft.Extensions.Options;
 using SalesDealer.Core;
 using SalesDealer.Data;
+using SalesDealer.Data.Models;
 using SalesDealer.Shared;
 using System;
 using System.Collections.Generic;
@@ -16,14 +18,16 @@ namespace SalesDealer.Services
         private readonly AppDbContext _appDbContext;
         private readonly PgpEncryptionService _pgpEncryptionService;
         private readonly SftpManagementService _sftpManagementService;
+        private readonly IMapper _mapper;
         private readonly IOptions<AppSettings> _appSettings;
 
         public SalesService(AppDbContext appDbContext, PgpEncryptionService pgpEncryptionService,
-            SftpManagementService sftpManagementService, IOptions<AppSettings> appSettings) 
+            SftpManagementService sftpManagementService, IMapper mapper, IOptions<AppSettings> appSettings) 
         {
             _appDbContext = appDbContext;
             _pgpEncryptionService = pgpEncryptionService;
             _sftpManagementService = sftpManagementService;
+            _mapper = mapper;
             _appSettings = appSettings;
         }
 
@@ -86,6 +90,19 @@ namespace SalesDealer.Services
             using TextReader textReader = new StreamReader(streamFile);
 
             return new FileHelperEngine<SalesFH>().ReadStream(textReader);
+        }
+
+        public void PersistSalesFromXML(SalesRoot salesRoot) 
+        {
+            IList<SaleSummary> saleSummariesList = new List<SaleSummary>();
+
+            salesRoot?.Sales?.Sale?.ForEach(x =>
+            {
+                saleSummariesList.Add(_mapper.Map<SaleSummary>(x));
+            });
+
+            _appDbContext.SaleSummaries.AddRange(saleSummariesList);
+            _appDbContext.SaveChanges();
         }
 
         private IList<SalesFH> GetAllSales() 

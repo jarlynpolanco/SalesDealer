@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SalesDealer.Data.Models;
-using SalesDealer.Shared;
 using System.Threading.Tasks;
 
 namespace SalesDealer.Data
@@ -12,6 +11,7 @@ namespace SalesDealer.Data
         public DbSet<Sale> Sales { get; set; }
         public DbSet<SaleDescription> SaleDescriptions { get; set; }
         public DbSet<Service> Services { get; set; }
+        public DbSet<SaleSummary> SaleSummaries { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
@@ -19,10 +19,5 @@ namespace SalesDealer.Data
         }
 
         public Task<int> SaveChangesAsync() => base.SaveChangesAsync();
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-        }
     }
 }
