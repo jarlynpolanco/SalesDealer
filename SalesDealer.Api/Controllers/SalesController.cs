@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using SalesDealer.Core;
-using SalesDealer.Data.Models;
 using SalesDealer.Services;
 using SalesDealer.Shared;
 

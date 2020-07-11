@@ -43,17 +43,15 @@ namespace SalesDealer.Core
             settings.Indent = true;
             settings.OmitXmlDeclaration = true;
 
-            using (StringWriter textWriter = new StringWriter())
+            using StringWriter textWriter = new StringWriter();
+            using (XmlWriter xmlWriter = XmlWriter.Create(textWriter, settings))
             {
-                using (XmlWriter xmlWriter = XmlWriter.Create(textWriter, settings))
-                {
-                    if (addNameSpace)
-                        serializer.Serialize(xmlWriter, value, ns);
-                    else
-                        serializer.Serialize(xmlWriter, value);
-                }
-                return textWriter.ToString();
+                if (addNameSpace)
+                    serializer.Serialize(xmlWriter, value, ns);
+                else
+                    serializer.Serialize(xmlWriter, value);
             }
+            return textWriter.ToString();
         }
 
     }
