@@ -1,0 +1,59 @@
+﻿@page "/"
+@inject HttpClient Http
+
+<h1>Dealer de Ventas de Claro</h1>
+
+@if (salesList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else 
+{
+<table class="table table-responsive">
+    <thead>
+        <tr>
+            <th>Codigo</th>
+            <th>Cedula</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Descripcion</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Descripcion Servicio</th>
+            <th>Nombre Revendedor</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in salesList)
+        {
+        <tr>
+            <td>@item.SaleCod</td>
+            <td>@item.ClientDocumentNumber</td>
+            <td>@item.ClientName</td>
+            <td>@item.ClientLastName</td>
+            <td>@item.SaleAmount</td>
+            <td>@item.SaleDescription</td>
+            <td>@item.SaleDate</td>
+            <td>@item.SaleTime</td>
+            <td>@item.ServiceDescription</td>
+            <td>@item.ResellerCName</td>
+        </tr>
+        }
+    </tbody>
+</table>
+}
+
+@code{
+    private IList<SalesDealer.Shared.SalesFH> salesList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetFromJsonAsync<SalesDealer.Shared.GenericResponse<string>>
+            ("https://localhost:5001/api/Sales/GenerateAllSales");
+
+        var responseFh = await Http.GetFromJsonAsync<SalesDealer.Shared.GenericResponse<IList<SalesDealer.Shared.SalesFH>>>
+            ($"https://localhost:5001/api/Sales/GetSalesFromFile/{response.Data.ToString()}");
+
+        salesList = responseFh.Data.ToList();
+    }
+}
