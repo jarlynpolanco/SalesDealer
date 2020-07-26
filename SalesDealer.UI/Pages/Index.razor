@@ -1,61 +1,57 @@
 ﻿@page "/"
-@inject HttpClient Http
+@inject ISalesRepository _salesRepository
+@inject IFileRepository _fileRepository
 
-<h1>Dealer de Ventas de Claro</h1>
+<h1>Dealers de Claro</h1>
 
 <br />
 <br />
 
 @if (salesList == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>LOADING...</em></p>
 }
-else 
+else
 {
-<table class="table table-responsive">
-    <thead class="thead-light">
-        <tr>
-            <th scope="col">Codigo</th>
-            <th scope="col">Cedula</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">Apellido</th>
-            <th scope="col">Monto</th>
-            <th scope="col">Descripcion</th>
-            <th scope="col">Fecha</th>
-            <th scope="col">Hora</th>
-            <th scope="col">Nombre Revendedor</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in salesList)
-        {
-        <tr>
-            <td scope="row">@item.SaleCod</td>
-            <td scope="row">@item.ClientDocumentNumber</td>
-            <td scope="row">@item.ClientName</td>
-            <td scope="row">@item.ClientLastName</td>
-            <td scope="row">@string.Format("{0:c}", item.SaleAmount)</td>
-            <td scope="row">@item.SaleDescription</td>
-            <td scope="row">@item.SaleDate</td>
-            <td scope="row">@item.SaleTime</td>
-            <td scope="row">@item.ResellerCName</td>
-        </tr>
-        }
-    </tbody>
-</table>
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Codigo</th>
+                <th>Cedula</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Monto</th>
+                <th>Descripcion</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Revendedor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in salesList)
+            {
+                <tr>
+                    <td>@item.SaleCod</td>
+                    <td>@item.ClientDocumentNumber</td>
+                    <td>@item.ClientName</td>
+                    <td>@item.ClientLastName</td>
+                    <td>@string.Format("{0:c}", item.SaleAmount)</td>
+                    <td>@item.SaleDescription</td>
+                    <td>@item.SaleDate</td>
+                    <td>@item.SaleTime</td>
+                    <td>@item.ResellerCName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code{
-    private IList<SalesDealer.Shared.SalesFH> salesList;
+    private IList<SalesFH> salesList;
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetFromJsonAsync<SalesDealer.Shared.GenericResponse<string>>
-            ("https://localhost:5001/api/Sales/GenerateAllSales");
-
-        var responseFh = await Http.GetFromJsonAsync<SalesDealer.Shared.GenericResponse<IList<SalesDealer.Shared.SalesFH>>>
-            ($"https://localhost:5001/api/Sales/GetSalesFromFile/{response.Data.ToString()}");
-
-        salesList = responseFh.Data.ToList();
+        string fileName = await _fileRepository.Get(Endpoints.GenerateSalesEndpoint);
+        salesList = await _salesRepository.Get(Endpoints.GetSalesEndpoint, fileName);
     }
 }
