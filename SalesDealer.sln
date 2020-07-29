@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesDealer.Services", "Sal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesDealer.Core", "SalesDealer.Core\SalesDealer.Core.csproj", "{1D6C00B5-BA1B-4629-A9F2-1B9FE1B4E37E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesDealer.UI", "SalesDealer.UI\SalesDealer.UI.csproj", "{B5AE5AA6-3D7A-4FC3-AB30-14059116E41C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SalesDealer.UI", "SalesDealer.UI\SalesDealer.UI.csproj", "{B5AE5AA6-3D7A-4FC3-AB30-14059116E41C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -13,6 +13,12 @@
 }
 else
 {
+<div class="form-group form-inline">
+    <label for="Date"><strong>Fecha de venta:</strong></label>
+    <input type="date" class="form-control" id="Date" placeholder="Seleccione fecha de venta"
+            @onchange="@(args => FilterByDateSelected(args.Value.ToString()))">
+</div>
+    <br />
     <table class="table table-responsive">
         <thead>
             <tr>
@@ -48,10 +54,19 @@ else
 
 @code{
     private IList<SalesFH> salesList;
+    private IList<SalesFH> originalSalesList;
 
     protected override async Task OnInitializedAsync()
     {
         string fileName = await _fileRepository.Get(Endpoints.GenerateSalesEndpoint);
         salesList = await _salesRepository.Get(Endpoints.GetSalesEndpoint, fileName);
+        originalSalesList = salesList;
+    }
+
+    private void FilterByDateSelected(string value)
+    {
+        salesList = originalSalesList
+            .Where(x => (DateTime.ParseExact(x.SaleDate, "dd/MM/yyyy", CultureInfo.InvariantCulture).Date)
+                == (DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)).ToList();
     }
 }
