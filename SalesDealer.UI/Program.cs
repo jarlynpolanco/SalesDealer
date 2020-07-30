@@ -18,7 +18,8 @@ namespace SalesDealer.UI
             builder.Services.AddTransient(sp => new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
             builder.Services.AddTransient<ISalesRepository, SalesRepository>();
             builder.Services.AddTransient<IFileRepository, FileRepository>();
-           await builder.Build().RunAsync();
+
+            await builder.Build().RunAsync();
         }
     }
 }

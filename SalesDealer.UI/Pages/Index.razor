@@ -2,7 +2,7 @@
 @inject ISalesRepository _salesRepository
 @inject IFileRepository _fileRepository
 
-<h1>Dealers de Claro</h1>
+<h1>Dealers de Claro Dominicana</h1>
 
 <br />
 <br />
@@ -22,12 +22,12 @@ else
     <table class="table table-responsive">
         <thead>
             <tr>
-                <th>Codigo</th>
-                <th>Cedula</th>
+                <th>Código</th>
+                <th>Cédula</th>
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>Monto</th>
-                <th>Descripcion</th>
+                <th>Descripción</th>
                 <th>Fecha</th>
                 <th>Hora</th>
                 <th>Revendedor</th>
@@ -41,10 +41,10 @@ else
                     <td>@item.ClientDocumentNumber</td>
                     <td>@item.ClientName</td>
                     <td>@item.ClientLastName</td>
-                    <td>@string.Format("{0:c}", item.SaleAmount)</td>
+                    <td>@FormatNumberAsAmount(item.SaleAmount)</td>
                     <td>@item.SaleDescription</td>
                     <td>@item.SaleDate</td>
-                    <td>@item.SaleTime</td>
+                    <td>@FormatTimeAsShort(item.SaleTime)</td>
                     <td>@item.ResellerCName</td>
                 </tr>
             }
@@ -68,5 +68,16 @@ else
         salesList = originalSalesList
             .Where(x => (DateTime.ParseExact(x.SaleDate, "dd/MM/yyyy", CultureInfo.InvariantCulture).Date)
                 == (DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)).ToList();
+    }
+
+    private string FormatNumberAsAmount(string amount)
+    {
+        var money = decimal.Parse(amount);
+        return $"{money:C}"; ;
+    }
+
+    private string FormatTimeAsShort(string time)
+    {
+        return $"{time.Split(':')[0]}:{time.Split(':')[1]}";
     }
 }
