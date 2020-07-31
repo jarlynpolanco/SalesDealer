@@ -18,6 +18,11 @@ else
     <input type="date" class="form-control" id="Date" placeholder="Seleccione fecha de venta"
             @onchange="@(args => FilterByDateSelected(args.Value.ToString()))">
 </div>
+<div class="form-group form-inline">
+    <label for="Time"><strong>Hora de venta:</strong></label>
+    <input type="time" class="form-control" id="Time" placeholder="Seleccione hora de venta"
+           @onchange="@(args => FilterByTimeSelected(args.Value.ToString()))">
+</div>
     <br />
     <table class="table table-responsive">
         <thead>
@@ -55,19 +60,33 @@ else
 @code{
     private IList<SalesFH> salesList;
     private IList<SalesFH> originalSalesList;
+    private IList<SalesFH> originalSalesForHoursList;
 
     protected override async Task OnInitializedAsync()
     {
         string fileName = await _fileRepository.Get(Endpoints.GenerateSalesEndpoint);
         salesList = await _salesRepository.Get(Endpoints.GetSalesEndpoint, fileName);
         originalSalesList = salesList;
+        originalSalesForHoursList = salesList;
     }
 
     private void FilterByDateSelected(string value)
     {
         salesList = originalSalesList
-            .Where(x => (DateTime.ParseExact(x.SaleDate, "dd/MM/yyyy", CultureInfo.InvariantCulture).Date)
-                == (DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date)).ToList();
+            .Where(x =>
+            (DateTime.ParseExact(x.SaleDate, "dd/MM/yyyy", CultureInfo.InvariantCulture).Date) ==
+            (DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture).Date))
+            .ToList();
+        originalSalesForHoursList = salesList;
+    }
+
+    private void FilterByTimeSelected(string value)
+    {
+        salesList = originalSalesForHoursList
+        .Where(x =>
+        (TimeSpan.Parse($"{x.SaleTime.Split(':')[0]}:{x.SaleTime.Split(':')[1]}:{x.SaleTime.Split(':')[2]}")).Ticks ==
+        TimeSpan.Parse(value).Ticks)
+        .ToList();
     }
 
     private string FormatNumberAsAmount(string amount)
